@@ -1,4 +1,5 @@
 # Read waypoints from a GPX file and convert it to a CSV, projecting if asked.
+# Requires gpsbabel
 
 gpx2csv <- function (f = "~/", pr = CRS("+init=epsg:32735")) { # UTM 35S
   # Read GPX file waypoints only.
