@@ -1,0 +1,6 @@
+<<<<<<< HEAD
+2011-11-26 HLF
+A set of R scripts for the 'counting animals' project (updating Mike Norton-Griffiths' 1978 "Counting Animals" guide to aerial survey).
+=======
+2011-11-26  R scripts for ecological methods, a resource for the "Counting Animals" project and the WCS Aerial Survey Manual. Primarily developed in R 2.13.x and 2.14.x on Mac OSX.
+>>>>>>> Added tools
