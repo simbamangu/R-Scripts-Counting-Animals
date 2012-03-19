@@ -16,4 +16,5 @@ rotatePoints <- function(shfile, rotation){
 	curr.ppp <- rotate.ppp(curr.ppp, rotR)
 
 	return(data.frame(cbind(curr.ppp$x + xmin + (xmax - xmin)/2, curr.ppp$y + ymin + (ymax - ymin) / 2)))
+  
 	}
