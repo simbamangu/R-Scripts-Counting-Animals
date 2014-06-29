@@ -1,5 +1,7 @@
 ## raster2points
 ## Function for converting a raster to a SpatialPointsDataFrame
+## GPL license
+## See www.underdiverwaterman.com for more tools
 #
 # Usage:
 # To create a new object from a raster:
