@@ -1,14 +1,15 @@
+## raster2points
+## Function for converting a raster to a SpatialPointsDataFrame
+#
+# Usage:
+# To create a new object from a raster:
+# rpoints <- raster2points("~/workspace/TEMP/rast_3.asc", write=F)
+# 
+# To create a shapefile in the same directory (rast_3.shp):
+# rpoints <- raster2points("~/workspace/TEMP/rast_3.asc", write=T)
+
 library(maptools)
 library(raster)
-
-# Load the raster from a file
-r <- raster("~/workspace/TEMP/rast_3.asc")
-
-# Convert to spatial points
-p <- as(r, "SpatialPointsDataFrame")
-
-# Save as a shapefile
-writeSpatialShape(p, "~/workspace/TEMP/rast_3_points")
 
 raster2points <- function(rast, write = FALSE) {
   r <- raster(rast)
