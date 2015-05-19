@@ -1,16 +1,19 @@
-## Survey simulation package
+### Survey simulation package
 # Like WiSP, but using spatial objects & SRF
 # Names:
 #  zone = the area of the survey
 #  samp = sample units (transects, blocks, APS?)
 #  popn = population
 
+# 2015-04-07 Note that owin objects cannot be created from shapefiles read
+#     in by rgdal! Must use maptools.
+
 library(sp)
+library(maptools) # Needed for 
 library(rgdal)
 library(spatstat)
 library(rgeos)
-
-setwd("~/workspace/surveysim/")
+library(mapdata)
 
 # Jolly II function
 Jolly <- function(srftable) {
@@ -39,34 +42,29 @@ Jolly <- function(srftable) {
   sz2 <- var(srftable$tran.samp)
   szy <- (1/(n-1)) * (sum(srftable$count*srftable$tran.samp) - sum(srftable$tran.area) * sum(srftable$count)/n)
   N <- length(srftable$transect) * sum(srftable$tran.area) / sum(srftable$tran.samp)  # Population of samples (NOT the real one - estimate!)
-  varY <- (N*(N-n)/n)*sy2-2*R*n+R^2*sz2	# Variance of population estimate
+  varY <- (N*(N-n)/n)*sy2-2*R*n+R^2*sz2  # Variance of population estimate
   sterr <- sqrt(varY)
   answer <- c(obs, R, Y, n, N, varY, sterr)
   return(answer)
 }
 
-## Parameters
-EPSG <- 32736   # Central TZ
-zone.CRS <- CRS(paste("+init=epsg:", EPSG, sep=""))
-
 ## Generate survey area
 # Use shapefile or generic shape
-
-#zone.shape <- "ad hoc"
-GenZone <- function (xmin, xmax, ymin, ymax) {
-  # Generates a square zone bounded by min/max values
+GenZone <- function (xmin, xmax, ymin, ymax, crs.EPSG = 32731) {
+  # Generates a square zone bounded by min/max values.
+  # Default CRS is 32736 for Tanzania.
   zone.def <- cbind(c(xmin, xmin, xmax, xmax, xmin), c(ymin, ymax, ymax, ymin, ymin))
   zone.polygon <- Polygon(zone.def)
   zone.polygons <- Polygons(list(zone.polygon), "zone")
+  zone.CRS <- CRS(paste("+init=epsg:", crs.EPSG, sep=""))
   zone <- SpatialPolygons(list(zone.polygons), proj4string=zone.CRS)
   return(zone)
 }
 
-## Generate population
-# Create locations of individuals or groups
-# Random / clumped, group size > generate locations
-
 GenPop <- function (pop.groups = 500, pop.groupsize = 3, zone.owin=zone.owin, zone.CRS=zone.CRS) {
+  # Generate population
+  # Create locations of individuals or groups
+  # Random / clumped, group size > generate locations
   pop.type <- "random"
   pop.points <- runifpoint(pop.groups, win=zone.owin)
   
@@ -77,9 +75,9 @@ GenPop <- function (pop.groups = 500, pop.groupsize = 3, zone.owin=zone.owin, zo
   return(pop.points)
 }
 
-## Generate sample transects / strips / blocks
-# Parameters
-GenTran <- function(tran.num = 20, tran.width = 300, zone, tran, zone.CRS) {
+GenTran <- function(tran.num = 20, tran.width = 300, zone, crs.EPSG = 32736) {
+  ## Generate sample transects / strips / blocks
+  # Parameters
   zone.bounds <- bbox(zone)
   tran.list <- list()
   for (tran in 1:tran.num) {
@@ -90,14 +88,14 @@ GenTran <- function(tran.num = 20, tran.width = 300, zone, tran, zone.CRS) {
     tn.polygons <- Polygons(list(tn.polygon), tran)
     tran.list[tran] <- tn.polygons
   }
+  zone.CRS <- CRS(paste("+init=epsg:", crs.EPSG, sep=""))
   return(SpatialPolygons(tran.list, proj4string = zone.CRS))
 }
 
 ## Sample from population
-# Overlay transects
 OverlayPoints <- function (pop.points, transects, tran.num, zone, transect) {
+  # Overlay transects
   tran.over <- data.frame(transect=over(pop.points, transects), count=pop.points$count)
-  
   ## Calculate
   # Summarise by transect
   
@@ -108,10 +106,27 @@ OverlayPoints <- function (pop.points, transects, tran.num, zone, transect) {
   return(tran.summary)
 }
 
-
 ## Calcs
-zone <- GenZone(540000, 800000, 9038000, 9360000)
-zone.owin <- as.owin(bbox(zone)[c(1,3,2,4)])
+# zone <- GenZone(540000, 800000, 9038000, 9360000)
+# zone.owin <- as.owin(bbox(zone)[c(1,3,2,4)])
+
+setwd("/Users/simbamangu/Dropbox/Projects/GEC-WAP/")
+t.surveyshp <- readShapePoly("WAP_surveyboundary_buff5_utm")
+EPSG <- 32731   # WAP 
+zone.CRS <- CRS(paste("+init=epsg:", EPSG, sep=""))
+t.win <- as(t.surveyshp, "owin")
+t.pop <- GenPop(500, 3, t.win, zone.CRS)
+t.tran <- GenTran(20, 300, t.surveyshp, EPSG)
+t.pop.clip <- t.pop[!is.na(over(t.pop,t.tran)),]
+plot(t.win)
+points(t.pop, pch = 18, cex = 0.4, col = 'gray')
+plot(t.tran, add=T)
+points(t.pop.clip, col = 'green', pch = 18, cex = 0.5)
+proj4string(t.surveyshp) <- proj4string(t.tran)
+
+# t.surveyshp.poly <- as(t.surveyshp, "SpatialPolygons")
+# t.tran.clip <- over(t.tran, t.surveyshp)
+# t.tran.clip <- gIntersection(t.tran, t.surveyshp.poly)
 
 ## Effects of number of transects
 sim.start <- Sys.time()
