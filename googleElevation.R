@@ -5,6 +5,7 @@
 #############################################
 #x <- seq(-5, -1, 0.5)
 #y <- seq(33, 37, 0.5)
+# 2015-07-14 Not working? googleElevation(36.5, -2.3) gives elev -537?
 require(XML)
 
 googleElevation <- function (x, y) {
