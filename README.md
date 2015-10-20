@@ -1,12 +1,12 @@
 ##R scripts for some quantitative ecological methods
+
 This is a resource for the "Counting Animals" project and the WCS Aerial Survey Manual.
-=======
+
 R scripts for ecological methods, a resource for the "Counting Animals" project and the WCS Aerial Survey Manual.
 
 Primarily developed in R 3.1 and 2.14 on Mac OSX, but most tools should work on Linux and Windows.
 
 See [underdiverwaterman.com](www.underdiverwaterman.com) for additional tools and documentation.
-
 
 ###History:
 
