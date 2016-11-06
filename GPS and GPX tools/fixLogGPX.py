@@ -1,6 +1,9 @@
 ### Fix GPX file from Flightlogger.app 0.7.5
+# to do:
+#  - add option for different output file
+#
 # Usage:
-#  fixLogGPX.py file.gpx
+#  python fixLogGPX.py file.gpx
 # 
 # Output:
 #  file.gpx in place with <extension> tag replaced with <extensions>
