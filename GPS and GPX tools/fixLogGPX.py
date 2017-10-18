@@ -1,6 +1,7 @@
 ### Fix GPX file from Flightlogger.app 0.7.5
 # to do:
 #  - add option for different output file
+#  - fix the ogr:agl tag as well
 #
 # Usage:
 #  python fixLogGPX.py file.gpx
