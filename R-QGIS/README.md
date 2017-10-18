@@ -1,5 +1,5 @@
-#Scripts for R and QGIS
+# Scripts for R and QGIS
 
-##WriteQML
+## WriteQML
 
 Write a QGIS style file (QML file) for a TIF (raster)
